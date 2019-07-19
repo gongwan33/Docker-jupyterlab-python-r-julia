@@ -2,13 +2,15 @@ FROM ubuntu:18.04
 
 # Install packages
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends git python3 python3-pip gcc python-dev make cmake g++ gfortran libpng-dev libfreetype6-dev libxml2-dev libxslt1-dev nodejs ca-certificates musl-dev wget python3-setuptools
-RUN apt-get install -y --no-install-recommends build-essential autoconf libtool pkg-config python-opengl python-pil python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev
+RUN apt-get install -y --no-install-recommends git python3 python3-pip gcc python-dev make cmake g++ gfortran libpng-dev libfreetype6-dev libxml2-dev libxslt1-dev nodejs ca-certificates musl-dev wget python3-setuptools apt-utils
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y --no-install-recommends r-base
 
+RUN apt-get install -y --no-install-recommends build-essential autoconf libtool pkg-config python-opengl python-pil python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev
+
 # Install Jupyter
+RUN pip3 install wheel
 RUN pip3 install jupyter
 RUN pip3 install ipywidgets
 RUN jupyter nbextension enable --py widgetsnbextension
@@ -27,9 +29,8 @@ RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/
   echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \
   ln -s /usr/include/locale.h /usr/include/xlocale.h
 
-RUN cd /usr/local
-RUN wget https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.1-linux-x86_64.tar.gz
-RUN tar xf julia-1.1.1-linux-x86_64.tar.gz
+COPY julia-1.1.1-linux-x86_64.tar.gz /usr/local/julia-1.1.1-linux-x86_64.tar.gz
+RUN tar -xf /usr/local/julia-1.1.1-linux-x86_64.tar.gz -C /usr/local 
 RUN echo PATH=\$PATH:/usr/local/julia-1.1.1/bin/ >> /etc/profile
 RUN /bin/bash -c "source /etc/profile"
 
@@ -42,7 +43,7 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 COPY juliainit juliainit
-RUN julia juliainit
+RUN /usr/local/julia-1.1.1/bin/julia juliainit
 
 # Expose Jupyter port & cmd
 EXPOSE 8888
