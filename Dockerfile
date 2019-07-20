@@ -2,12 +2,12 @@ FROM ubuntu:18.04
 
 # Install packages
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends git python3 python3-pip gcc python-dev make cmake g++ gfortran libpng-dev libfreetype6-dev libxml2-dev libxslt1-dev nodejs ca-certificates musl-dev wget python3-setuptools apt-utils
+RUN apt-get install -y --no-install-recommends git python3 python3-pip gcc python3-dev make cmake g++ gfortran libpng-dev libfreetype6-dev libxml2-dev libxslt1-dev nodejs ca-certificates musl-dev wget python3-setuptools apt-utils libcurl4-gnutls-dev libssl-dev
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y --no-install-recommends r-base
 
-RUN apt-get install -y --no-install-recommends build-essential autoconf libtool pkg-config python-opengl python-pil python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev
+RUN apt-get install -y --no-install-recommends build-essential autoconf libtool pkg-config python3-opengl python3-pil python-pyrex python3-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3
 
 # Install Jupyter
 RUN pip3 install wheel
@@ -45,7 +45,13 @@ RUN pip3 install -r requirements.txt
 COPY juliainit juliainit
 RUN /usr/local/julia-1.1.1/bin/julia juliainit
 
+COPY rinit rinit
+RUN R rinit
+
+RUN pip3 install conda
+
 # Expose Jupyter port & cmd
 EXPOSE 8888
 RUN mkdir -p /opt/app/data
+
 CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=/opt/app/data --allow-root
