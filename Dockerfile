@@ -46,7 +46,7 @@ COPY juliainit juliainit
 RUN /usr/local/julia-1.1.1/bin/julia juliainit
 
 COPY rinit rinit
-RUN R rinit
+RUN R --no-save < rinit
 
 RUN pip3 install conda
 
