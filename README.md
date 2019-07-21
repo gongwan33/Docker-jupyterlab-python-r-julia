@@ -8,7 +8,7 @@ This docker image will start a Jupyter Lab web server listening on port 8888. It
 ## Build the image
 
 ```
-docker-compose build jupyterlab-r-julia
+ docker-compose build jupyterlab-r-julia
 ```
 
 ## Run the image (it has already been put on Docker hub)
